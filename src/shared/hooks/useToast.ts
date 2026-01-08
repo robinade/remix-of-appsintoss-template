@@ -21,7 +21,7 @@ export function useToast(defaultDuration = 3000): UseToastReturn {
     type: "info",
   });
   
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const hideToast = useCallback(() => {
     setToast((prev) => ({ ...prev, visible: false }));
