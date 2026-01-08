@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- 
+      📱 앱인토스 미니앱 필수 viewport 설정
+      - user-scalable=no: 핀치 줌 비활성화 (앱인토스 가이드라인)
+      - viewport-fit=cover: 풀스크린 지원 (노치/다이나믹 아일랜드 대응)
+    -->
+    <meta 
+      name="viewport" 
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" 
+    />
+    
+    <!-- 앱 기본 정보 -->
+    <title>앱인토스 미니앱</title>
+    <meta name="description" content="앱인토스 미니앱 템플릿" />
+    
+    <!-- 📱 iOS 웹앱 설정 -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    
+    <!-- 🎨 테마 컬러 -->
+    <meta name="theme-color" content="#FFFFFF" />
+    
+    <!-- 
+      🔤 Pretendard 폰트 (토스 공식 폰트)
+      토스 디자인 시스템에서 사용하는 폰트입니다.
+    -->
+    <link
+      rel="stylesheet"
+      as="style"
+      crossorigin
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
+    
+    <!-- 파비콘 -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  </head>
+
+  <body>
+    <!-- 
+      ⚠️ 터치 하이라이트 비활성화를 위해 CSS에서 처리합니다.
+      앱인토스에서 웹뷰가 네이티브처럼 느껴지도록 합니다.
+    -->
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

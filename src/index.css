@@ -1,0 +1,246 @@
+/**
+ * 앱인토스 미니앱 글로벌 스타일
+ * 
+ * 토스 디자인 시스템(TDS)에 맞춰 기본 스타일을 설정합니다.
+ * 
+ * ⚠️ 앱인토스는 라이트 모드만 지원합니다!
+ * 
+ * 📚 TDS 가이드: https://developers-apps-in-toss.toss.im/design/components.md
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * 📱 앱인토스 필수 스타일
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+/* 터치 하이라이트 비활성화 (네이티브 앱처럼 보이도록) */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* 텍스트 선택 비활성화 (게임/인터랙티브 콘텐츠에서 필요시 사용) */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* 스크롤바 숨기기 (모바일에서는 보통 숨김) */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Safe Area 지원 (노치/다이나믹 아일랜드 대응) */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.safe-area-left {
+  padding-left: env(safe-area-inset-left);
+}
+.safe-area-right {
+  padding-right: env(safe-area-inset-right);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * 🎨 토스 디자인 시스템 컬러
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  :root {
+    /* 토스 기본 컬러 */
+    --toss-blue: 214 98% 58%;        /* #3182F6 - 토스 블루 */
+    --toss-blue-dark: 214 98% 48%;   /* 다크 토스 블루 */
+    
+    /* 그레이스케일 */
+    --gray-50: 210 20% 98%;          /* #F7F8FA */
+    --gray-100: 210 14% 96%;         /* #F2F4F6 */
+    --gray-200: 210 12% 91%;         /* #E5E8EB */
+    --gray-300: 210 10% 87%;         /* #DADEE2 */
+    --gray-400: 210 8% 71%;          /* #B0B8C1 */
+    --gray-500: 210 7% 56%;          /* #8B95A1 */
+    --gray-600: 210 9% 44%;          /* #6B7684 */
+    --gray-700: 210 12% 32%;         /* #4E5968 */
+    --gray-800: 216 16% 22%;         /* #333D4B */
+    --gray-900: 220 25% 11%;         /* #191F28 */
+    
+    /* 시맨틱 컬러 */
+    --success: 158 71% 38%;          /* #00C471 */
+    --error: 354 86% 60%;            /* #F04452 */
+    --warning: 40 100% 63%;          /* #FFC043 */
+    
+    /* shadcn/ui 기본 컬러 (라이트 모드 전용) */
+    --background: 0 0% 100%;
+    --foreground: 220 25% 11%;       /* gray-900 */
+    
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 11%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 11%;
+    
+    --primary: 214 98% 58%;          /* 토스 블루 */
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 210 14% 96%;        /* gray-100 */
+    --secondary-foreground: 220 25% 11%;
+    
+    --muted: 210 14% 96%;
+    --muted-foreground: 210 7% 56%;  /* gray-500 */
+    
+    --accent: 210 14% 96%;
+    --accent-foreground: 220 25% 11%;
+    
+    --destructive: 354 86% 60%;      /* error */
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 210 12% 91%;           /* gray-200 */
+    --input: 210 12% 91%;
+    --ring: 214 98% 58%;             /* 토스 블루 */
+    
+    --radius: 0.75rem;               /* 12px - 토스 기본 라디우스 */
+    
+    /* 사이드바 (shadcn/ui 호환) */
+    --sidebar-background: 210 20% 98%;
+    --sidebar-foreground: 220 25% 11%;
+    --sidebar-primary: 214 98% 58%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 14% 96%;
+    --sidebar-accent-foreground: 220 25% 11%;
+    --sidebar-border: 210 12% 91%;
+    --sidebar-ring: 214 98% 58%;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * 🔤 Pretendard 폰트 설정
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  html {
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+      system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo',
+      'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji',
+      'Segoe UI Symbol', sans-serif;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'ss01', 'ss02';  /* Pretendard 스타일리스틱 세트 */
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  * {
+    @apply border-border;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * 📐 토스 타이포그래피
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer utilities {
+  /* 제목 */
+  .text-title1 {
+    @apply text-[26px] leading-[34px] font-bold tracking-[-0.02em];
+  }
+  .text-title2 {
+    @apply text-[22px] leading-[28px] font-bold tracking-[-0.02em];
+  }
+  .text-title3 {
+    @apply text-[18px] leading-[24px] font-bold tracking-[-0.02em];
+  }
+  
+  /* 본문 */
+  .text-body1 {
+    @apply text-[17px] leading-[24px] font-normal tracking-[-0.01em];
+  }
+  .text-body2 {
+    @apply text-[15px] leading-[22px] font-normal tracking-[-0.01em];
+  }
+  .text-body3 {
+    @apply text-[13px] leading-[18px] font-normal tracking-[-0.01em];
+  }
+  
+  /* 캡션 */
+  .text-caption1 {
+    @apply text-[12px] leading-[16px] font-normal;
+  }
+  .text-caption2 {
+    @apply text-[11px] leading-[14px] font-normal;
+  }
+  
+  /* 토스 컬러 유틸리티 */
+  .text-toss-blue {
+    color: hsl(var(--toss-blue));
+  }
+  .bg-toss-blue {
+    background-color: hsl(var(--toss-blue));
+  }
+  .text-success {
+    color: hsl(var(--success));
+  }
+  .text-error {
+    color: hsl(var(--error));
+  }
+  .text-warning {
+    color: hsl(var(--warning));
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * 🧩 토스 스타일 컴포넌트
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  /* 토스 스타일 버튼 */
+  .btn-toss {
+    @apply inline-flex items-center justify-center rounded-xl px-6 py-3
+           text-body2 font-semibold transition-colors
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+           disabled:pointer-events-none disabled:opacity-50;
+  }
+  
+  .btn-toss-primary {
+    @apply btn-toss bg-toss-blue text-white
+           hover:bg-[hsl(var(--toss-blue-dark))]
+           focus-visible:ring-[hsl(var(--toss-blue))];
+  }
+  
+  .btn-toss-secondary {
+    @apply btn-toss bg-[hsl(var(--gray-100))] text-[hsl(var(--gray-900))]
+           hover:bg-[hsl(var(--gray-200))];
+  }
+  
+  .btn-toss-ghost {
+    @apply btn-toss bg-transparent text-[hsl(var(--gray-700))]
+           hover:bg-[hsl(var(--gray-100))];
+  }
+  
+  /* 토스 스타일 카드 */
+  .card-toss {
+    @apply rounded-2xl bg-white p-4 shadow-sm
+           border border-[hsl(var(--gray-200))];
+  }
+  
+  /* 토스 스타일 입력 */
+  .input-toss {
+    @apply w-full rounded-xl border border-[hsl(var(--gray-200))]
+           bg-white px-4 py-3 text-body2
+           placeholder:text-[hsl(var(--gray-400))]
+           focus:border-[hsl(var(--toss-blue))] focus:outline-none focus:ring-2
+           focus:ring-[hsl(var(--toss-blue))] focus:ring-opacity-20
+           disabled:bg-[hsl(var(--gray-100))] disabled:text-[hsl(var(--gray-400))];
+  }
+}
