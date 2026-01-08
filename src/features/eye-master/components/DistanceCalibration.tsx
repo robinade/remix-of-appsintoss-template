@@ -3,8 +3,8 @@
  * TensorFlow.js + BlazeFace 사용
  */
 
-import { useState, useEffect, useRef } from 'react';
-import { Eye, Scan, Loader2, AlertTriangle, Check } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Eye, Scan, Loader2, AlertTriangle, Check, Camera, RefreshCw } from 'lucide-react';
 import { CalibrationStatus } from '../types';
 
 interface DistanceCalibrationProps {
@@ -12,69 +12,55 @@ interface DistanceCalibrationProps {
   onError?: () => void;
 }
 
+type PermissionState = 'prompt' | 'granted' | 'denied' | 'checking';
+
 export function DistanceCalibration({ onComplete, onError }: DistanceCalibrationProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [status, setStatus] = useState<CalibrationStatus>('loading_model');
   const [eyeDistance, setEyeDistance] = useState(0);
   const [cameraError, setCameraError] = useState(false);
+  const [permissionState, setPermissionState] = useState<PermissionState>('checking');
+  const [errorMessage, setErrorMessage] = useState('');
   const modelRef = useRef<any>(null);
   const requestRef = useRef<number>();
   const streamRef = useRef<MediaStream | null>(null);
 
-  // TensorFlow.js 모델 로드
-  useEffect(() => {
-    const loadResources = async () => {
-      try {
-        const loadScript = (src: string): Promise<void> => {
-          return new Promise((resolve, reject) => {
-            if (document.querySelector(`script[src="${src}"]`)) {
-              resolve();
-              return;
-            }
-            const script = document.createElement('script');
-            script.src = src;
-            script.onload = () => resolve();
-            script.onerror = reject;
-            document.head.appendChild(script);
-          });
-        };
-
-        if (!(window as any).tf) {
-          await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0');
-        }
-        if (!(window as any).blazeface) {
-          await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface@0.0.7');
-        }
-
-        // 모델 로드
-        const model = await (window as any).blazeface.load();
-        modelRef.current = model;
-        setStatus('searching');
-        await startVideo();
-      } catch (err) {
-        console.error('Failed to load AI models', err);
-        setCameraError(true);
-        onError?.();
+  // 카메라 권한 상태 확인
+  const checkCameraPermission = useCallback(async (): Promise<PermissionState> => {
+    try {
+      // Permission API 지원 확인
+      if (navigator.permissions && navigator.permissions.query) {
+        const result = await navigator.permissions.query({ name: 'camera' as PermissionName });
+        return result.state as PermissionState;
       }
-    };
+      // Permission API 미지원 시 prompt로 가정
+      return 'prompt';
+    } catch {
+      // 일부 브라우저에서 camera 권한 쿼리 미지원
+      return 'prompt';
+    }
+  }, []);
 
-    loadResources();
-
-    return () => {
-      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+  // 카메라 스트림 시작
+  const startVideo = useCallback(async () => {
+    try {
+      // 기존 스트림 정리
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
       }
-    };
-  }, [onError]);
 
-  const startVideo = async () => {
-    try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: 640, height: 480 }
+        video: { 
+          facingMode: 'user', 
+          width: { ideal: 640 },
+          height: { ideal: 480 }
+        }
       });
+      
       streamRef.current = stream;
+      setPermissionState('granted');
+      setCameraError(false);
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -83,14 +69,33 @@ export function DistanceCalibration({ onComplete, onError }: DistanceCalibration
           detectFace();
         };
       }
-    } catch (err) {
-      console.error('Camera access denied', err);
+      return true;
+    } catch (err: any) {
+      console.error('Camera access error:', err);
+      
+      // 에러 유형별 메시지 설정
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        setPermissionState('denied');
+        setErrorMessage('카메라 권한이 거부되었습니다. 브라우저 설정에서 카메라 권한을 허용해주세요.');
+      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+        setErrorMessage('카메라를 찾을 수 없습니다. 카메라가 연결되어 있는지 확인해주세요.');
+      } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+        setErrorMessage('카메라가 다른 앱에서 사용 중입니다. 다른 앱을 종료하고 다시 시도해주세요.');
+      } else if (err.name === 'OverconstrainedError') {
+        setErrorMessage('카메라 설정을 지원하지 않습니다.');
+      } else if (err.name === 'SecurityError') {
+        setErrorMessage('보안 정책으로 인해 카메라에 접근할 수 없습니다. HTTPS 연결이 필요합니다.');
+      } else {
+        setErrorMessage('카메라에 접근할 수 없습니다. 다시 시도해주세요.');
+      }
+      
       setCameraError(true);
-      onError?.();
+      return false;
     }
-  };
+  }, []);
 
-  const detectFace = async () => {
+  // 얼굴 감지 함수
+  const detectFace = useCallback(async () => {
     if (!modelRef.current || !videoRef.current || !canvasRef.current) return;
 
     const video = videoRef.current;
@@ -155,6 +160,100 @@ export function DistanceCalibration({ onComplete, onError }: DistanceCalibration
     }
 
     requestRef.current = requestAnimationFrame(detectFace);
+  }, []);
+
+  // TensorFlow.js 모델 로드
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadResources = async () => {
+      try {
+        // 먼저 카메라 권한 상태 확인
+        const permission = await checkCameraPermission();
+        if (!isMounted) return;
+        setPermissionState(permission);
+
+        const loadScript = (src: string): Promise<void> => {
+          return new Promise((resolve, reject) => {
+            if (document.querySelector(`script[src="${src}"]`)) {
+              resolve();
+              return;
+            }
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = () => resolve();
+            script.onerror = reject;
+            document.head.appendChild(script);
+          });
+        };
+
+        if (!(window as any).tf) {
+          await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0');
+        }
+        if (!(window as any).blazeface) {
+          await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface@0.0.7');
+        }
+
+        // 모델 로드
+        const model = await (window as any).blazeface.load();
+        if (!isMounted) return;
+        modelRef.current = model;
+        setStatus('searching');
+        
+        // 권한이 이미 granted이거나 prompt 상태면 카메라 시작 시도
+        if (permission === 'granted') {
+          await startVideo();
+        }
+      } catch (err) {
+        console.error('Failed to load AI models', err);
+        if (isMounted) {
+          setErrorMessage('AI 모델을 로드하는 데 실패했습니다. 네트워크 연결을 확인해주세요.');
+          setCameraError(true);
+          onError?.();
+        }
+      }
+    };
+
+    loadResources();
+
+    return () => {
+      isMounted = false;
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [checkCameraPermission, startVideo, onError]);
+
+  // 카메라 권한 요청 버튼 핸들러
+  const handleRequestPermission = async () => {
+    setPermissionState('checking');
+    setCameraError(false);
+    setErrorMessage('');
+    
+    const success = await startVideo();
+    if (!success) {
+      // 에러는 startVideo에서 처리됨
+    }
+  };
+
+  // 재시도 핸들러
+  const handleRetry = async () => {
+    setCameraError(false);
+    setErrorMessage('');
+    setPermissionState('checking');
+    setStatus('loading_model');
+    
+    // 스트림 정리 후 재시도
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    
+    const success = await startVideo();
+    if (success) {
+      setStatus('searching');
+    }
   };
 
   const handleComplete = () => {
@@ -173,23 +272,71 @@ export function DistanceCalibration({ onComplete, onError }: DistanceCalibration
     perfect: { text: '거리 확보됨! (40cm)', color: 'text-success' },
   };
 
-  if (cameraError) {
+  // 카메라 권한 요청 화면
+  if (permissionState === 'prompt' || (permissionState === 'checking' && status !== 'loading_model')) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] p-6">
-        <div className="w-20 h-20 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
-          <AlertTriangle className="w-10 h-10 text-destructive" />
+      <div className="flex flex-col items-center justify-center min-h-[70vh] p-6">
+        <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+          <Camera className="w-12 h-12 text-primary" />
         </div>
-        <h2 className="text-title3 text-foreground mb-2">카메라 접근 불가</h2>
-        <p className="text-body2 text-muted-foreground text-center mb-6">
-          카메라 권한이 필요합니다.<br />
-          브라우저 설정에서 허용해주세요.
+        <h2 className="text-title3 text-foreground mb-2 text-center">카메라 권한이 필요합니다</h2>
+        <p className="text-body2 text-muted-foreground text-center mb-8 max-w-xs">
+          정확한 거리 측정을 위해 카메라를 사용합니다.
+          영상은 기기 내에서만 처리되며 저장되지 않습니다.
         </p>
         <button
-          onClick={handleComplete}
-          className="btn-toss-secondary"
+          onClick={handleRequestPermission}
+          className="w-full max-w-xs bg-primary text-primary-foreground py-4 rounded-2xl font-bold text-body1 flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform"
         >
-          수동으로 시작하기
+          <Camera className="w-5 h-5" />
+          카메라 권한 허용하기
         </button>
+        <button
+          onClick={handleComplete}
+          className="mt-4 text-muted-foreground text-body2 underline"
+        >
+          권한 없이 시작하기
+        </button>
+      </div>
+    );
+  }
+
+  // 에러 화면
+  if (cameraError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[70vh] p-6">
+        <div className="w-24 h-24 rounded-full bg-destructive/10 flex items-center justify-center mb-6">
+          <AlertTriangle className="w-12 h-12 text-destructive" />
+        </div>
+        <h2 className="text-title3 text-foreground mb-2 text-center">카메라 접근 불가</h2>
+        <p className="text-body2 text-muted-foreground text-center mb-6 max-w-xs">
+          {errorMessage || '카메라에 접근할 수 없습니다.'}
+        </p>
+        
+        {permissionState === 'denied' && (
+          <div className="bg-secondary/50 rounded-xl p-4 mb-6 max-w-xs">
+            <p className="text-caption1 text-muted-foreground text-center">
+              <strong>권한 허용 방법:</strong><br />
+              브라우저 주소창 왼쪽의 🔒 아이콘 클릭 → 카메라 권한 허용 → 페이지 새로고침
+            </p>
+          </div>
+        )}
+        
+        <div className="flex flex-col gap-3 w-full max-w-xs">
+          <button
+            onClick={handleRetry}
+            className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-bold text-body1 flex items-center justify-center gap-2"
+          >
+            <RefreshCw className="w-5 h-5" />
+            다시 시도
+          </button>
+          <button
+            onClick={handleComplete}
+            className="w-full bg-secondary text-foreground py-4 rounded-2xl font-bold text-body1"
+          >
+            권한 없이 시작하기
+          </button>
+        </div>
       </div>
     );
   }
