@@ -94,7 +94,13 @@ export function DistanceCalibration({ onComplete, onError }: DistanceCalibration
     }
   }, []);
 
-  // 얼굴 감지 함수
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 거리 측정 상수 (40cm 기준) - 얼굴 바운딩 박스 높이 기반
+  // ═══════════════════════════════════════════════════════════════════════════
+  const FACE_HEIGHT_MIN = 140;  // 이보다 작으면 너무 멂
+  const FACE_HEIGHT_MAX = 320;  // 이보다 크면 너무 가까움
+
+  // 얼굴 감지 함수 (개선: 얼굴 박스 기반 - 한쪽 눈 가려도 작동)
   const detectFace = useCallback(async () => {
     if (!modelRef.current || !videoRef.current || !canvasRef.current) return;
 
@@ -113,45 +119,80 @@ export function DistanceCalibration({ onComplete, onError }: DistanceCalibration
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (predictions.length > 0) {
-        const landmarks = predictions[0].landmarks;
-        const rightEye = landmarks[0];
-        const leftEye = landmarks[1];
+        const face = predictions[0];
+        
+        // 얼굴 바운딩 박스 기반 측정 (한쪽 눈 가려도 작동!)
+        const topLeft = face.topLeft as [number, number];
+        const bottomRight = face.bottomRight as [number, number];
+        const faceWidth = bottomRight[0] - topLeft[0];
+        const faceHeight = bottomRight[1] - topLeft[1];
+        
+        // IPD 측정 (두 눈 다 보일 때만 사용)
+        const landmarks = face.landmarks;
+        let eyeDistancePx = 0;
+        let hasValidEyes = false;
+        
+        if (landmarks && landmarks.length >= 2) {
+          const rightEye = landmarks[0];
+          const leftEye = landmarks[1];
+          
+          // 눈 좌표가 얼굴 바운딩 박스 안에 있는지 확인
+          const rightEyeValid = rightEye[0] > topLeft[0] && rightEye[0] < bottomRight[0];
+          const leftEyeValid = leftEye[0] > topLeft[0] && leftEye[0] < bottomRight[0];
+          
+          if (rightEyeValid && leftEyeValid) {
+            const dx = rightEye[0] - leftEye[0];
+            const dy = rightEye[1] - leftEye[1];
+            eyeDistancePx = Math.sqrt(dx * dx + dy * dy);
+            hasValidEyes = eyeDistancePx > 20;
+          }
+        }
+        
+        setEyeDistance(Math.round(hasValidEyes ? eyeDistancePx : faceHeight));
 
-        const dx = rightEye[0] - leftEye[0];
-        const dy = rightEye[1] - leftEye[1];
-        const eyeDistancePx = Math.sqrt(dx * dx + dy * dy);
-        setEyeDistance(Math.round(eyeDistancePx));
-
-        // 거리 판별 (40cm 기준)
-        const TARGET_MIN = 95;
-        const TARGET_MAX = 125;
-
+        // 거리 판별 (얼굴 높이 기반)
         let lineColor = '#ef4444';
-        if (eyeDistancePx >= TARGET_MIN && eyeDistancePx <= TARGET_MAX) {
-          lineColor = '#22c55e';
-          setStatus('perfect');
-        } else if (eyeDistancePx < TARGET_MIN) {
+        if (faceHeight < FACE_HEIGHT_MIN) {
           lineColor = '#eab308';
           setStatus('too_far');
-        } else {
+        } else if (faceHeight > FACE_HEIGHT_MAX) {
           lineColor = '#ef4444';
           setStatus('too_close');
+        } else {
+          lineColor = '#22c55e';
+          setStatus('perfect');
         }
 
-        // 시각화
+        // 시각화 - 얼굴 박스
         ctx.strokeStyle = lineColor;
         ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(rightEye[0], rightEye[1]);
-        ctx.lineTo(leftEye[0], leftEye[1]);
-        ctx.stroke();
+        ctx.strokeRect(topLeft[0], topLeft[1], faceWidth, faceHeight);
 
-        ctx.fillStyle = lineColor;
-        [rightEye, leftEye].forEach(eye => {
+        // 눈 위치 표시 (감지된 경우만)
+        if (hasValidEyes && landmarks) {
+          const rightEye = landmarks[0];
+          const leftEye = landmarks[1];
+          
+          ctx.strokeStyle = lineColor;
+          ctx.lineWidth = 2;
           ctx.beginPath();
-          ctx.arc(eye[0], eye[1], 6, 0, 2 * Math.PI);
-          ctx.fill();
-        });
+          ctx.moveTo(rightEye[0], rightEye[1]);
+          ctx.lineTo(leftEye[0], leftEye[1]);
+          ctx.stroke();
+
+          ctx.fillStyle = lineColor;
+          [rightEye, leftEye].forEach(eye => {
+            ctx.beginPath();
+            ctx.arc(eye[0], eye[1], 6, 0, 2 * Math.PI);
+            ctx.fill();
+          });
+        } else {
+          // 한쪽 눈만 보이는 경우 안내
+          ctx.fillStyle = lineColor;
+          ctx.font = 'bold 20px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('👁️ OK', topLeft[0] + faceWidth / 2, topLeft[1] + faceHeight / 2);
+        }
       } else {
         setStatus('searching');
       }
@@ -350,7 +391,7 @@ export function DistanceCalibration({ onComplete, onError }: DistanceCalibration
           <span className="text-body2 font-semibold">AI 거리 측정</span>
         </div>
         <div className="px-3 py-1 rounded-full bg-secondary text-caption1">
-          IPD: {eyeDistance}px
+          크기: {eyeDistance}px
         </div>
       </div>
 

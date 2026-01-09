@@ -215,8 +215,8 @@ export function HomeScreen({ onShowToast }: HomeScreenProps) {
   
   const autoCheckItems: CheckItem[] = [
     {
-      id: 'darkmode',
-      label: '다크모드 CSS 없음',
+      id: 'light-only',
+      label: '라이트모드 전용',
       checked: true, // 템플릿 기본값
       type: 'auto',
       status: 'pass',

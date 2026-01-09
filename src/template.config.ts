@@ -23,7 +23,7 @@ export const templateConfig = {
    * 
    * @example '출시 가이드' | '쇼핑몰' | '퍼즐 게임'
    */
-  appName: '출시 가이드', // ⚠️ TODO: granite.config.ts의 displayName과 동일하게 변경
+  appName: '눈 건강 마스터', // ✅ granite.config.ts의 displayName과 동기화됨
   
   /**
    * 앱 ID (영문, 소문자, 하이픈)
@@ -32,7 +32,7 @@ export const templateConfig = {
    * 
    * @example 'todo-app' | 'shopping-mall' | 'puzzle-game'
    */
-  appId: 'todo-app', // ⚠️ TODO: granite.config.ts의 appName과 동일하게 변경
+  appId: 'eyemaster', // ✅ granite.config.ts의 appName과 동기화됨
   
   /**
    * 앱 버전
@@ -44,7 +44,7 @@ export const templateConfig = {
    * 앱 설명 (선택)
    * 앱 내에서 사용할 수 있는 설명 문구입니다.
    */
-  description: '앱인토스 미니앱 출시 가이드 - 이 템플릿으로 출시까지!', // TODO: 실제 앱 설명으로 변경
+  description: 'AI 기반 눈 건강 관리 앱 - 시력 테스트, 색약 검사, 난시 검사, 20-20-20 타이머, 눈 운동', // ✅ 앱 설명 업데이트
 
   // ═══════════════════════════════════════════════════════════════════════
   // 🎨 테마 설정 (출시 필수 설정)
@@ -60,7 +60,7 @@ export const templateConfig = {
      * 
      * @example '#3182F6' (토스 블루) | '#00C471' (그린)
      */
-    primaryColor: '#3182F6', // ⚠️ TODO: granite.config.ts의 primaryColor와 동일하게 변경
+    primaryColor: '#3182F6', // ✅ granite.config.ts의 primaryColor와 동기화됨
     
     // ───────────────────────────────────────────────────────────────────
     // 📝 아래 색상들은 토스 디자인 시스템(TDS) 기본값입니다.
@@ -103,7 +103,7 @@ export const templateConfig = {
    * 여기서는 앱 내 UI에서 권한 상태를 표시하는 용도로만 사용됩니다.
    */
   permissions: {
-    camera: false,      // 카메라
+    camera: true,       // ✅ 카메라 - 거리 측정에서 사용
     photo: false,       // 사진 앨범
     location: false,    // 위치 정보
     contacts: false,    // 연락처
@@ -141,9 +141,9 @@ export const templateConfig = {
    */
   deepLink: {
     /** 프로덕션 딥링크 */
-    production: 'intoss://todo-app', // ⚠️ TODO: 'todo-app'을 실제 appId로 변경
+    production: 'intoss://eyemaster', // ✅ 실제 appId로 설정됨
     /** 테스트(샌드박스) 딥링크 */
-    sandbox: 'intoss-private://todo-app', // ⚠️ TODO: 'todo-app'을 실제 appId로 변경
+    sandbox: 'intoss-private://eyemaster', // ✅ 실제 appId로 설정됨
   },
 } as const;
 

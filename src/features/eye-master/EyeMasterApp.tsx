@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Eye } from 'lucide-react';
 import { useAppsInToss } from '@/hooks/useAppsInToss';
 import { ScreenType } from './types';
 import { useEyeHealth } from './hooks/useEyeHealth';
@@ -76,30 +76,52 @@ export function EyeMasterApp({ onShowToast }: EyeMasterAppProps) {
     onShowToast?.('눈 운동 완료!', 'success');
   };
 
-  // 로딩 중
+  // 로딩 중 - Premium Loading Screen
   if (!isLoaded) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <span className="text-2xl">👁️</span>
+        <div className="text-center animate-fade-in">
+          {/* Premium Icon Container with Glow */}
+          <div className="relative mx-auto mb-6">
+            {/* Glow effect */}
+            <div className="absolute inset-0 w-24 h-24 rounded-3xl bg-gradient-to-br from-[hsl(var(--health-blue))] to-[hsl(var(--health-green))] blur-xl opacity-30 animate-pulse-soft" />
+            {/* Main icon */}
+            <div className="relative icon-container-xl icon-vivid-blue animate-float mx-auto">
+              <Eye className="w-8 h-8 text-white" />
+            </div>
           </div>
-          <p className="text-body2 text-muted-foreground">로딩 중...</p>
+          
+          {/* App Name with gradient */}
+          <h1 className="text-title2 font-bold text-foreground mb-1">눈 건강 마스터</h1>
+          
+          {/* Loading indicator */}
+          <div className="flex items-center justify-center gap-2 mt-4">
+            <div className="flex gap-1">
+              <div className="w-2 h-2 rounded-full bg-[hsl(var(--health-blue))] animate-bounce" style={{ animationDelay: '0ms' }} />
+              <div className="w-2 h-2 rounded-full bg-[hsl(var(--health-blue))] animate-bounce" style={{ animationDelay: '150ms' }} />
+              <div className="w-2 h-2 rounded-full bg-[hsl(var(--health-blue))] animate-bounce" style={{ animationDelay: '300ms' }} />
+            </div>
+          </div>
+          <p className="text-caption1 text-muted-foreground mt-3">데이터를 불러오는 중...</p>
         </div>
       </div>
     );
   }
 
-  // 뒤로가기 헤더
+  // 뒤로가기 헤더 - Premium Sticky Header
   const BackHeader = ({ title }: { title: string }) => (
-    <div className="flex items-center gap-3 p-4 border-b border-border bg-background sticky top-0 z-10">
+    <div className="flex items-center gap-3 p-4 border-b border-[hsl(var(--neutral-200)/0.6)] bg-white/80 backdrop-blur-xl sticky top-0 z-10"
+         style={{ boxShadow: 'var(--shadow-sm)' }}>
       <button
         onClick={handleBack}
-        className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center"
+        className="w-11 h-11 rounded-2xl bg-[hsl(var(--neutral-100))] flex items-center justify-center
+                   transition-all duration-150 btn-touch
+                   hover:bg-[hsl(var(--neutral-150))]
+                   active:scale-95 active:bg-[hsl(var(--neutral-200))]"
       >
-        <ArrowLeft className="w-5 h-5 text-foreground" />
+        <ArrowLeft className="w-5 h-5 text-[hsl(var(--neutral-700))]" />
       </button>
-      <h1 className="text-body1 font-bold text-foreground">{title}</h1>
+      <h1 className="text-title3 text-foreground">{title}</h1>
     </div>
   );
 

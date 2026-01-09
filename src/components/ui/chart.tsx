@@ -4,7 +4,8 @@ import * as RechartsPrimitive from "recharts";
 import { cn } from "@/lib/utils";
 
 // Format: { THEME_NAME: CSS_SELECTOR }
-const THEMES = { light: "", dark: ".dark" } as const;
+// 앱인토스는 라이트 모드만 지원
+const THEMES = { light: "" } as const;
 
 export type ChartConfig = {
   [k in string]: {

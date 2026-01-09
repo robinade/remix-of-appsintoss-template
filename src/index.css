@@ -1,11 +1,11 @@
 /**
- * 앱인토스 미니앱 글로벌 스타일
+ * EyeMaster - Premium Eye Health App
  * 
- * 토스 디자인 시스템(TDS)에 맞춰 기본 스타일을 설정합니다.
+ * Design System: Healthcare Neumorphism + Glassmorphism
+ * Color Philosophy: Trust Blue + Vitality Green + Warm Neutrals
+ * Typography: Pretendard with refined hierarchy
  * 
- * ⚠️ 앱인토스는 라이트 모드만 지원합니다!
- * 
- * 📚 TDS 가이드: https://developers-apps-in-toss.toss.im/design/components.md
+ * ⚠️ Light mode ONLY (Apps-in-Toss requirement)
  */
 
 @tailwind base;
@@ -52,77 +52,176 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
- * 🎨 토스 디자인 시스템 컬러
+ * 🎨 EyeMaster Premium Color System
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 @layer base {
   :root {
-    /* 토스 기본 컬러 */
-    --toss-blue: 214 98% 58%;        /* #3182F6 - 토스 블루 */
-    --toss-blue-dark: 214 98% 48%;   /* 다크 토스 블루 */
+    /* ────────────────────────────────────────────────────────────────────────
+     * 🏥 Healthcare Primary Palette
+     * ──────────────────────────────────────────────────────────────────────── */
     
-    /* 그레이스케일 */
-    --gray-50: 210 20% 98%;          /* #F7F8FA */
-    --gray-100: 210 14% 96%;         /* #F2F4F6 */
-    --gray-200: 210 12% 91%;         /* #E5E8EB */
-    --gray-300: 210 10% 87%;         /* #DADEE2 */
-    --gray-400: 210 8% 71%;          /* #B0B8C1 */
-    --gray-500: 210 7% 56%;          /* #8B95A1 */
-    --gray-600: 210 9% 44%;          /* #6B7684 */
-    --gray-700: 210 12% 32%;         /* #4E5968 */
-    --gray-800: 216 16% 22%;         /* #333D4B */
-    --gray-900: 220 25% 11%;         /* #191F28 */
+    /* Trust Blue - Primary brand color (calm, professional) */
+    --health-blue: 210 100% 52%;        /* #0A84FF */
+    --health-blue-dark: 210 100% 42%;   /* #0066CC */
+    --health-blue-light: 210 100% 92%;  /* #E5F2FF */
+    --health-blue-subtle: 210 40% 96%;  /* #F0F6FC */
     
-    /* 시맨틱 컬러 */
-    --success: 158 71% 38%;          /* #00C471 */
-    --error: 354 86% 60%;            /* #F04452 */
-    --warning: 40 100% 63%;          /* #FFC043 */
+    /* Vitality Green - Success, health, wellness */
+    --health-green: 152 76% 44%;        /* #1BB76E */
+    --health-green-dark: 152 76% 34%;   /* #158F56 */
+    --health-green-light: 152 70% 94%;  /* #E8F9F0 */
+    --health-green-glow: 152 100% 70%;  /* #5FFFB1 - for gradients */
     
-    /* shadcn/ui 기본 컬러 (라이트 모드 전용) */
-    --background: 0 0% 100%;
-    --foreground: 220 25% 11%;       /* gray-900 */
+    /* Coral Warmth - Accent, energy, engagement */
+    --health-coral: 16 100% 66%;        /* #FF7052 */
+    --health-coral-light: 16 100% 94%;  /* #FFF0EC */
+    
+    /* Violet Touch - Premium, special features */
+    --health-violet: 262 83% 66%;       /* #8B5CF6 */
+    --health-violet-light: 262 80% 95%; /* #F3EFFF */
+    
+    /* Amber Alert - Warnings, attention */
+    --health-amber: 38 100% 54%;        /* #FFB020 */
+    --health-amber-light: 38 100% 93%;  /* #FFF6E5 */
+    
+    /* ────────────────────────────────────────────────────────────────────────
+     * 🌊 Warm Neutral System (More organic than pure gray)
+     * ──────────────────────────────────────────────────────────────────────── */
+    
+    --neutral-50: 220 20% 98%;          /* #F8F9FB */
+    --neutral-100: 220 16% 96%;         /* #F3F5F7 */
+    --neutral-150: 218 14% 94%;         /* #ECEEF1 */
+    --neutral-200: 216 12% 89%;         /* #E1E4E8 */
+    --neutral-300: 214 10% 82%;         /* #CFD4DA */
+    --neutral-400: 212 9% 64%;          /* #9CA3AF */
+    --neutral-500: 210 8% 50%;          /* #787F8A */
+    --neutral-600: 210 10% 38%;         /* #565D67 */
+    --neutral-700: 212 14% 26%;         /* #3A424D */
+    --neutral-800: 214 18% 18%;         /* #262E38 */
+    --neutral-900: 218 22% 10%;         /* #151A21 */
+    
+    /* ────────────────────────────────────────────────────────────────────────
+     * ✨ Premium Effects
+     * ──────────────────────────────────────────────────────────────────────── */
+    
+    /* Glassmorphism */
+    --glass-bg: 0 0% 100% / 0.72;
+    --glass-border: 0 0% 100% / 0.18;
+    --glass-blur: 20px;
+    
+    /* Neumorphic Shadows (light source: top-left) */
+    --neu-shadow-light: 0 0% 100%;
+    --neu-shadow-dark: 220 20% 88%;
+    
+    /* Gradient Backgrounds */
+    --gradient-hero-start: 210 100% 97%;  /* #F0F7FF */
+    --gradient-hero-end: 152 50% 97%;     /* #F0FDF7 */
+    --gradient-card-shine: 0 0% 100% / 0.5;
+    
+    /* ────────────────────────────────────────────────────────────────────────
+     * 🎯 Semantic Tokens (shadcn/ui compatible)
+     * ──────────────────────────────────────────────────────────────────────── */
+    
+    --background: 220 20% 98%;          /* Warm off-white */
+    --foreground: 218 22% 10%;          /* neutral-900 */
     
     --card: 0 0% 100%;
-    --card-foreground: 220 25% 11%;
+    --card-foreground: 218 22% 10%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 11%;
+    --popover-foreground: 218 22% 10%;
     
-    --primary: 214 98% 58%;          /* 토스 블루 */
+    --primary: 210 100% 52%;            /* health-blue */
     --primary-foreground: 0 0% 100%;
     
-    --secondary: 210 14% 96%;        /* gray-100 */
-    --secondary-foreground: 220 25% 11%;
+    --secondary: 220 16% 96%;           /* neutral-100 */
+    --secondary-foreground: 218 22% 10%;
     
-    --muted: 210 14% 96%;
-    --muted-foreground: 210 7% 56%;  /* gray-500 */
+    --muted: 220 16% 96%;
+    --muted-foreground: 212 9% 64%;     /* neutral-400 */
     
-    --accent: 210 14% 96%;
-    --accent-foreground: 220 25% 11%;
+    --accent: 152 76% 44%;              /* health-green */
+    --accent-foreground: 0 0% 100%;
     
-    --destructive: 354 86% 60%;      /* error */
+    --destructive: 0 84% 60%;           /* Modern red */
     --destructive-foreground: 0 0% 100%;
     
-    --border: 210 12% 91%;           /* gray-200 */
-    --input: 210 12% 91%;
-    --ring: 214 98% 58%;             /* 토스 블루 */
+    --success: 152 76% 44%;             /* health-green */
+    --warning: 38 100% 54%;             /* health-amber */
+    --error: 0 84% 60%;
     
-    --radius: 0.75rem;               /* 12px - 토스 기본 라디우스 */
+    --border: 216 12% 89%;              /* neutral-200 */
+    --input: 216 12% 89%;
+    --ring: 210 100% 52%;               /* health-blue */
     
-    /* 사이드바 (shadcn/ui 호환) */
-    --sidebar-background: 210 20% 98%;
-    --sidebar-foreground: 220 25% 11%;
-    --sidebar-primary: 214 98% 58%;
+    --radius: 1rem;                     /* 16px - More modern, rounded */
+    --radius-sm: 0.75rem;               /* 12px */
+    --radius-lg: 1.25rem;               /* 20px */
+    --radius-xl: 1.5rem;                /* 24px */
+    --radius-full: 9999px;
+    
+    /* ────────────────────────────────────────────────────────────────────────
+     * 🌟 Premium Shadow System
+     * ──────────────────────────────────────────────────────────────────────── */
+    
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+    --shadow-sm: 0 2px 4px -1px rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.03);
+    --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+    --shadow-lg: 0 12px 24px -4px rgb(0 0 0 / 0.1), 0 4px 8px -2px rgb(0 0 0 / 0.04);
+    --shadow-xl: 0 20px 40px -8px rgb(0 0 0 / 0.12), 0 8px 16px -4px rgb(0 0 0 / 0.06);
+    
+    /* Colored Shadows (for primary buttons/cards) */
+    --shadow-blue: 0 8px 24px -4px hsl(210 100% 52% / 0.25);
+    --shadow-green: 0 8px 24px -4px hsl(152 76% 44% / 0.25);
+    --shadow-coral: 0 8px 24px -4px hsl(16 100% 66% / 0.25);
+    
+    /* Inner Shadows (neumorphism) */
+    --shadow-inner-sm: inset 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-inner-md: inset 0 2px 4px 0 rgb(0 0 0 / 0.06);
+    
+    /* ────────────────────────────────────────────────────────────────────────
+     * ⏱️ Animation Timing
+     * ──────────────────────────────────────────────────────────────────────── */
+    
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-elastic: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+    --duration-slow: 400ms;
+    
+    /* Sidebar (shadcn/ui 호환) */
+    --sidebar-background: 220 20% 98%;
+    --sidebar-foreground: 218 22% 10%;
+    --sidebar-primary: 210 100% 52%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 14% 96%;
-    --sidebar-accent-foreground: 220 25% 11%;
-    --sidebar-border: 210 12% 91%;
-    --sidebar-ring: 214 98% 58%;
+    --sidebar-accent: 220 16% 96%;
+    --sidebar-accent-foreground: 218 22% 10%;
+    --sidebar-border: 216 12% 89%;
+    --sidebar-ring: 210 100% 52%;
+    
+    /* Legacy Toss compatibility */
+    --toss-blue: 210 100% 52%;
+    --toss-blue-dark: 210 100% 42%;
+    --toss-blue-light: 210 100% 68%;
+    
+    /* Legacy gray scale mapping */
+    --gray-50: var(--neutral-50);
+    --gray-100: var(--neutral-100);
+    --gray-200: var(--neutral-200);
+    --gray-300: var(--neutral-300);
+    --gray-400: var(--neutral-400);
+    --gray-500: var(--neutral-500);
+    --gray-600: var(--neutral-600);
+    --gray-700: var(--neutral-700);
+    --gray-800: var(--neutral-800);
+    --gray-900: var(--neutral-900);
   }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
- * 🔤 Pretendard 폰트 설정
+ * 🔤 Typography System
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 @layer base {
@@ -131,6 +230,7 @@
       system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo',
       'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji',
       'Segoe UI Symbol', sans-serif;
+    scroll-behavior: smooth;
   }
   
   body {
@@ -139,6 +239,13 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-image: linear-gradient(
+      180deg, 
+      hsl(var(--gradient-hero-start)) 0%, 
+      hsl(var(--background)) 100%
+    );
+    background-attachment: fixed;
+    min-height: 100vh;
   }
   
   * {
@@ -147,100 +254,542 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
- * 📐 토스 타이포그래피
+ * 📐 Premium Typography Scale
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 @layer utilities {
-  /* 제목 */
-  .text-title1 {
-    @apply text-[26px] leading-[34px] font-bold tracking-[-0.02em];
+  /* ────────────────────────────────────────────────────────────────────────
+   * Display / Headlines
+   * ──────────────────────────────────────────────────────────────────────── */
+  
+  .text-display {
+    @apply text-[32px] leading-[40px] font-extrabold tracking-[-0.03em];
   }
+  
+  .text-title1 {
+    @apply text-[26px] leading-[34px] font-bold tracking-[-0.025em];
+  }
+  
   .text-title2 {
     @apply text-[22px] leading-[28px] font-bold tracking-[-0.02em];
   }
+  
   .text-title3 {
-    @apply text-[18px] leading-[24px] font-bold tracking-[-0.02em];
+    @apply text-[18px] leading-[24px] font-semibold tracking-[-0.015em];
   }
   
-  /* 본문 */
+  /* ────────────────────────────────────────────────────────────────────────
+   * Body Text
+   * ──────────────────────────────────────────────────────────────────────── */
+  
   .text-body1 {
-    @apply text-[17px] leading-[24px] font-normal tracking-[-0.01em];
+    @apply text-[17px] leading-[26px] font-normal tracking-[-0.01em];
   }
+  
   .text-body2 {
     @apply text-[15px] leading-[22px] font-normal tracking-[-0.01em];
   }
+  
   .text-body3 {
-    @apply text-[13px] leading-[18px] font-normal tracking-[-0.01em];
+    @apply text-[13px] leading-[18px] font-normal tracking-[-0.005em];
   }
   
-  /* 캡션 */
+  /* ────────────────────────────────────────────────────────────────────────
+   * Caption / Labels
+   * ──────────────────────────────────────────────────────────────────────── */
+  
   .text-caption1 {
-    @apply text-[12px] leading-[16px] font-normal;
-  }
-  .text-caption2 {
-    @apply text-[11px] leading-[14px] font-normal;
+    @apply text-[12px] leading-[16px] font-medium tracking-[0.01em];
   }
   
-  /* 토스 컬러 유틸리티 */
-  .text-toss-blue {
-    color: hsl(var(--toss-blue));
+  .text-caption2 {
+    @apply text-[11px] leading-[14px] font-medium tracking-[0.02em];
   }
-  .bg-toss-blue {
-    background-color: hsl(var(--toss-blue));
+  
+  .text-label {
+    @apply text-[11px] leading-[14px] font-bold tracking-[0.04em] uppercase;
   }
-  .text-success {
-    color: hsl(var(--success));
+  
+  /* ────────────────────────────────────────────────────────────────────────
+   * Numeric / Data Display
+   * ──────────────────────────────────────────────────────────────────────── */
+  
+  .text-number-xl {
+    @apply text-[48px] leading-[52px] font-black tracking-[-0.04em];
+    font-variant-numeric: tabular-nums;
   }
-  .text-error {
-    color: hsl(var(--error));
+  
+  .text-number-lg {
+    @apply text-[36px] leading-[40px] font-extrabold tracking-[-0.03em];
+    font-variant-numeric: tabular-nums;
   }
-  .text-warning {
-    color: hsl(var(--warning));
+  
+  .text-number-md {
+    @apply text-[28px] leading-[32px] font-bold tracking-[-0.02em];
+    font-variant-numeric: tabular-nums;
   }
+  
+  .text-number-sm {
+    @apply text-[20px] leading-[24px] font-bold tracking-[-0.01em];
+    font-variant-numeric: tabular-nums;
+  }
+  
+  /* ────────────────────────────────────────────────────────────────────────
+   * Healthcare Color Utilities
+   * ──────────────────────────────────────────────────────────────────────── */
+  
+  /* Primary Blue */
+  .text-health-blue { color: hsl(var(--health-blue)); }
+  .bg-health-blue { background-color: hsl(var(--health-blue)); }
+  .bg-health-blue-light { background-color: hsl(var(--health-blue-light)); }
+  .bg-health-blue-subtle { background-color: hsl(var(--health-blue-subtle)); }
+  
+  /* Vitality Green */
+  .text-health-green { color: hsl(var(--health-green)); }
+  .bg-health-green { background-color: hsl(var(--health-green)); }
+  .bg-health-green-light { background-color: hsl(var(--health-green-light)); }
+  
+  /* Coral Accent */
+  .text-health-coral { color: hsl(var(--health-coral)); }
+  .bg-health-coral { background-color: hsl(var(--health-coral)); }
+  .bg-health-coral-light { background-color: hsl(var(--health-coral-light)); }
+  
+  /* Violet Premium */
+  .text-health-violet { color: hsl(var(--health-violet)); }
+  .bg-health-violet { background-color: hsl(var(--health-violet)); }
+  .bg-health-violet-light { background-color: hsl(var(--health-violet-light)); }
+  
+  /* Amber Warning */
+  .text-health-amber { color: hsl(var(--health-amber)); }
+  .bg-health-amber { background-color: hsl(var(--health-amber)); }
+  .bg-health-amber-light { background-color: hsl(var(--health-amber-light)); }
+  
+  /* Semantic (legacy compatible) */
+  .text-toss-blue { color: hsl(var(--toss-blue)); }
+  .bg-toss-blue { background-color: hsl(var(--toss-blue)); }
+  .text-success { color: hsl(var(--success)); }
+  .text-error { color: hsl(var(--error)); }
+  .text-warning { color: hsl(var(--warning)); }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
- * 🧩 토스 스타일 컴포넌트
+ * 🧩 Premium Component System
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 @layer components {
-  /* 토스 스타일 버튼 */
+  /* ────────────────────────────────────────────────────────────────────────
+   * 🔘 Button System
+   * ──────────────────────────────────────────────────────────────────────── */
+  
   .btn-toss {
-    @apply inline-flex items-center justify-center rounded-xl px-6 py-3
-           text-body2 font-semibold transition-colors
+    @apply inline-flex items-center justify-center rounded-2xl px-6 py-3.5
+           text-body2 font-semibold
+           transition-all duration-200
            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
            disabled:pointer-events-none disabled:opacity-50;
+    transition-timing-function: var(--ease-smooth);
   }
-  
+
   .btn-toss-primary {
-    @apply btn-toss bg-toss-blue text-white
-           hover:bg-[hsl(var(--toss-blue-dark))]
-           focus-visible:ring-[hsl(var(--toss-blue))];
+    @apply btn-toss text-white;
+    background: linear-gradient(135deg, hsl(var(--health-blue)) 0%, hsl(var(--health-blue-dark)) 100%);
+    box-shadow: var(--shadow-md), var(--shadow-blue);
   }
   
+  .btn-toss-primary:active {
+    @apply scale-[0.97];
+    box-shadow: var(--shadow-sm);
+  }
+
   .btn-toss-secondary {
-    @apply btn-toss bg-[hsl(var(--gray-100))] text-[hsl(var(--gray-900))]
-           hover:bg-[hsl(var(--gray-200))];
+    @apply btn-toss bg-white text-foreground border border-[hsl(var(--neutral-200))];
+    box-shadow: var(--shadow-sm);
   }
   
+  .btn-toss-secondary:active {
+    @apply scale-[0.97] bg-[hsl(var(--neutral-100))];
+  }
+
   .btn-toss-ghost {
-    @apply btn-toss bg-transparent text-[hsl(var(--gray-700))]
-           hover:bg-[hsl(var(--gray-100))];
+    @apply btn-toss bg-transparent text-[hsl(var(--neutral-600))];
   }
   
-  /* 토스 스타일 카드 */
+  .btn-toss-ghost:active {
+    @apply scale-[0.97] bg-[hsl(var(--neutral-100))];
+  }
+  
+  .btn-toss-success {
+    @apply btn-toss text-white;
+    background: linear-gradient(135deg, hsl(var(--health-green)) 0%, hsl(var(--health-green-dark)) 100%);
+    box-shadow: var(--shadow-md), var(--shadow-green);
+  }
+  
+  .btn-toss-success:active {
+    @apply scale-[0.97];
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* 터치 최적화 버튼 (모바일) - 44px+ touch target */
+  .btn-touch {
+    @apply min-h-[44px] min-w-[44px] touch-manipulation;
+    transition: all var(--duration-fast) var(--ease-smooth);
+  }
+  
+  .btn-touch:active {
+    @apply scale-[0.96] opacity-90;
+  }
+
+  /* ────────────────────────────────────────────────────────────────────────
+   * 🃏 Card System
+   * ──────────────────────────────────────────────────────────────────────── */
+  
+  /* Basic Card */
   .card-toss {
-    @apply rounded-2xl bg-white p-4 shadow-sm
-           border border-[hsl(var(--gray-200))];
+    @apply rounded-3xl bg-white p-5;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Interactive Card with press feedback */
+  .card-interactive {
+    @apply rounded-3xl bg-white p-5;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid hsl(var(--neutral-200) / 0.6);
+    transition: all var(--duration-fast) var(--ease-smooth);
   }
   
-  /* 토스 스타일 입력 */
-  .input-toss {
-    @apply w-full rounded-xl border border-[hsl(var(--gray-200))]
-           bg-white px-4 py-3 text-body2
-           placeholder:text-[hsl(var(--gray-400))]
-           focus:border-[hsl(var(--toss-blue))] focus:outline-none focus:ring-2
-           focus:ring-[hsl(var(--toss-blue))] focus:ring-opacity-20
-           disabled:bg-[hsl(var(--gray-100))] disabled:text-[hsl(var(--gray-400))];
+  .card-interactive:active {
+    @apply scale-[0.98];
+    box-shadow: var(--shadow-xs);
+    background-color: hsl(var(--neutral-50));
   }
+  
+  /* Glass Card (glassmorphism) */
+  .card-glass {
+    @apply rounded-3xl p-5;
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid hsl(var(--glass-border));
+    box-shadow: var(--shadow-md);
+  }
+  
+  /* Elevated Card (premium, floating) */
+  .card-elevated {
+    @apply rounded-3xl bg-white p-5;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid hsl(var(--neutral-100));
+  }
+  
+  .card-elevated:active {
+    @apply scale-[0.98];
+    box-shadow: var(--shadow-md);
+  }
+  
+  /* Neumorphic Card (soft UI) */
+  .card-neu {
+    @apply rounded-3xl bg-[hsl(var(--neutral-50))] p-5;
+    box-shadow: 
+      8px 8px 16px hsl(var(--neu-shadow-dark)),
+      -8px -8px 16px hsl(var(--neu-shadow-light));
+  }
+  
+  /* Hero Card (gradient background) */
+  .card-hero {
+    @apply rounded-3xl p-6 text-white overflow-hidden relative;
+    background: linear-gradient(135deg, hsl(var(--health-blue)) 0%, hsl(210 100% 40%) 100%);
+    box-shadow: var(--shadow-xl), var(--shadow-blue);
+  }
+  
+  .card-hero-green {
+    @apply rounded-3xl p-6 text-white overflow-hidden relative;
+    background: linear-gradient(135deg, hsl(var(--health-green)) 0%, hsl(152 76% 32%) 100%);
+    box-shadow: var(--shadow-xl), var(--shadow-green);
+  }
+
+  /* ────────────────────────────────────────────────────────────────────────
+   * 📊 Stat Badge / Pill
+   * ──────────────────────────────────────────────────────────────────────── */
+  
+  .badge-stat {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-caption1 font-semibold;
+    background: hsl(var(--neutral-100));
+    color: hsl(var(--neutral-700));
+  }
+  
+  .badge-stat-blue {
+    @apply badge-stat;
+    background: hsl(var(--health-blue-light));
+    color: hsl(var(--health-blue-dark));
+  }
+  
+  .badge-stat-green {
+    @apply badge-stat;
+    background: hsl(var(--health-green-light));
+    color: hsl(var(--health-green-dark));
+  }
+  
+  .badge-stat-coral {
+    @apply badge-stat;
+    background: hsl(var(--health-coral-light));
+    color: hsl(var(--health-coral));
+  }
+  
+  .badge-stat-violet {
+    @apply badge-stat;
+    background: hsl(var(--health-violet-light));
+    color: hsl(var(--health-violet));
+  }
+
+  /* ────────────────────────────────────────────────────────────────────────
+   * 🎨 Icon Containers
+   * ──────────────────────────────────────────────────────────────────────── */
+  
+  .icon-container {
+    @apply flex items-center justify-center rounded-2xl;
+  }
+  
+  .icon-container-sm {
+    @apply icon-container w-10 h-10;
+  }
+  
+  .icon-container-md {
+    @apply icon-container w-12 h-12;
+  }
+  
+  .icon-container-lg {
+    @apply icon-container w-14 h-14;
+  }
+  
+  .icon-container-xl {
+    @apply icon-container w-16 h-16 rounded-3xl;
+  }
+  
+  /* Gradient Icon Backgrounds */
+  .icon-gradient-blue {
+    background: linear-gradient(135deg, hsl(var(--health-blue-light)) 0%, hsl(var(--health-blue) / 0.2) 100%);
+  }
+  
+  .icon-gradient-green {
+    background: linear-gradient(135deg, hsl(var(--health-green-light)) 0%, hsl(var(--health-green) / 0.2) 100%);
+  }
+  
+  .icon-gradient-coral {
+    background: linear-gradient(135deg, hsl(var(--health-coral-light)) 0%, hsl(var(--health-coral) / 0.2) 100%);
+  }
+  
+  .icon-gradient-violet {
+    background: linear-gradient(135deg, hsl(var(--health-violet-light)) 0%, hsl(var(--health-violet) / 0.2) 100%);
+  }
+  
+  .icon-gradient-amber {
+    background: linear-gradient(135deg, hsl(var(--health-amber-light)) 0%, hsl(var(--health-amber) / 0.2) 100%);
+  }
+  
+  /* Vivid Gradient (for feature cards) */
+  .icon-vivid-blue {
+    background: linear-gradient(135deg, hsl(210 100% 60%) 0%, hsl(210 100% 45%) 100%);
+    box-shadow: 0 4px 12px hsl(210 100% 50% / 0.35);
+  }
+  
+  .icon-vivid-green {
+    background: linear-gradient(135deg, hsl(152 76% 50%) 0%, hsl(152 76% 38%) 100%);
+    box-shadow: 0 4px 12px hsl(152 76% 44% / 0.35);
+  }
+  
+  .icon-vivid-coral {
+    background: linear-gradient(135deg, hsl(16 100% 70%) 0%, hsl(16 100% 58%) 100%);
+    box-shadow: 0 4px 12px hsl(16 100% 66% / 0.35);
+  }
+  
+  .icon-vivid-violet {
+    background: linear-gradient(135deg, hsl(262 83% 70%) 0%, hsl(262 83% 58%) 100%);
+    box-shadow: 0 4px 12px hsl(262 83% 66% / 0.35);
+  }
+  
+  .icon-vivid-rainbow {
+    background: linear-gradient(135deg, hsl(0 100% 65%) 0%, hsl(120 100% 45%) 50%, hsl(240 100% 60%) 100%);
+    box-shadow: 0 4px 12px hsl(180 50% 50% / 0.25);
+  }
+
+  /* ────────────────────────────────────────────────────────────────────────
+   * 📝 Input System
+   * ──────────────────────────────────────────────────────────────────────── */
+  
+  .input-toss {
+    @apply w-full rounded-2xl border border-[hsl(var(--neutral-200))]
+           bg-white px-4 py-3.5 text-body2
+           placeholder:text-[hsl(var(--neutral-400))];
+    box-shadow: var(--shadow-inner-sm);
+    transition: all var(--duration-fast) var(--ease-smooth);
+  }
+  
+  .input-toss:focus {
+    @apply outline-none border-[hsl(var(--health-blue))];
+    box-shadow: 0 0 0 3px hsl(var(--health-blue) / 0.12);
+  }
+  
+  .input-toss:disabled {
+    @apply bg-[hsl(var(--neutral-100))] text-[hsl(var(--neutral-400))];
+  }
+
+  /* ────────────────────────────────────────────────────────────────────────
+   * 🎹 Keypad System
+   * ──────────────────────────────────────────────────────────────────────── */
+  
+  .keypad-btn {
+    @apply h-14 rounded-2xl bg-white
+           text-xl font-bold text-foreground;
+    border: 2px solid hsl(var(--neutral-200));
+    box-shadow: var(--shadow-sm);
+    transition: all var(--duration-fast) var(--ease-smooth);
+  }
+  
+  .keypad-btn:active {
+    @apply scale-95 text-white;
+    background: hsl(var(--health-blue));
+    border-color: hsl(var(--health-blue));
+    box-shadow: var(--shadow-blue);
+  }
+
+  /* ────────────────────────────────────────────────────────────────────────
+   * 🌊 Progress Ring
+   * ──────────────────────────────────────────────────────────────────────── */
+  
+  .progress-ring {
+    transform: rotate(-90deg);
+  }
+  
+  .progress-ring-track {
+    stroke: hsl(var(--neutral-200));
+    fill: none;
+  }
+  
+  .progress-ring-fill {
+    fill: none;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.6s var(--ease-smooth);
+  }
+
+  /* ────────────────────────────────────────────────────────────────────────
+   * 🔥 Streak / Fire Effect
+   * ──────────────────────────────────────────────────────────────────────── */
+  
+  .streak-badge {
+    @apply inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-caption1 font-bold;
+    background: linear-gradient(135deg, hsl(var(--health-coral)) 0%, hsl(25 100% 55%) 100%);
+    color: white;
+    box-shadow: 0 4px 12px hsl(var(--health-coral) / 0.35);
+  }
+
+  /* ────────────────────────────────────────────────────────────────────────
+   * 📱 Section Headers
+   * ──────────────────────────────────────────────────────────────────────── */
+  
+  .section-header {
+    @apply flex items-center justify-between mb-4 px-1;
+  }
+  
+  .section-title {
+    @apply text-label text-[hsl(var(--neutral-500))] tracking-wider;
+  }
+
+  /* ────────────────────────────────────────────────────────────────────────
+   * ✨ Decorative Elements
+   * ──────────────────────────────────────────────────────────────────────── */
+  
+  /* Gradient blob decorations */
+  .blob-decoration {
+    @apply absolute rounded-full pointer-events-none;
+    filter: blur(40px);
+    opacity: 0.6;
+  }
+  
+  /* Subtle pattern overlay */
+  .pattern-dots {
+    background-image: radial-gradient(circle, hsl(var(--neutral-300)) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  
+  /* Shine effect for cards */
+  .shine-effect {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .shine-effect::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--gradient-card-shine)),
+      transparent
+    );
+    animation: shine 3s infinite;
+  }
+  
+  @keyframes shine {
+    0% { left: -100%; }
+    50%, 100% { left: 150%; }
+  }
+
+  /* ────────────────────────────────────────────────────────────────────────
+   * 🎭 Animations
+   * ──────────────────────────────────────────────────────────────────────── */
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  
+  @keyframes scale-in {
+    0% { transform: scale(0.95); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  
+  @keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  
+  @keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-pulse-soft {
+    animation: pulse-soft 2s ease-in-out infinite;
+  }
+  
+  .animate-scale-in {
+    animation: scale-in 0.3s var(--ease-smooth);
+  }
+  
+  .animate-slide-up {
+    animation: slide-up 0.4s var(--ease-smooth);
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 0.3s var(--ease-smooth);
+  }
+  
+  /* Staggered animations for lists */
+  .stagger-1 { animation-delay: 50ms; }
+  .stagger-2 { animation-delay: 100ms; }
+  .stagger-3 { animation-delay: 150ms; }
+  .stagger-4 { animation-delay: 200ms; }
+  .stagger-5 { animation-delay: 250ms; }
 }

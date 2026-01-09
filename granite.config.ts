@@ -36,7 +36,7 @@ export default defineConfig({
    * 
    * @example 'my-todo-app' | 'shopping-mall' | 'game-puzzle'
    */
-  appName: 'todo-app', // ⚠️ TODO: 콘솔에서 등록한 앱 이름으로 변경하세요!
+  appName: 'eyemaster', // ✅ 앱인토스 콘솔 등록명과 일치
 
   // ═══════════════════════════════════════════════════════════════════════
   // 🌐 웹 서버 설정 (개발용)
@@ -71,7 +71,7 @@ export default defineConfig({
      * 
      * @example '할일 관리' | '쇼핑몰' | '퍼즐 게임'
      */
-    displayName: '할일 관리', // ⚠️ TODO: 앱 표시 이름으로 변경하세요!
+    displayName: '눈 건강 마스터', // ✅ 설정 완료
 
     /**
      * ─────────────────────────────────────────────────────────────────────
@@ -86,7 +86,7 @@ export default defineConfig({
      * 
      * @example '#3182F6' (토스 블루) | '#00C471' (그린) | '#FF5A5F' (레드)
      */
-    primaryColor: '#3182F6', // ⚠️ TODO: 브랜드 컬러로 변경하세요!
+    primaryColor: '#3182F6', // ✅ 토스 블루 사용
 
     /**
      * ─────────────────────────────────────────────────────────────────────
@@ -110,7 +110,7 @@ export default defineConfig({
      * 
      * @example 'https://cdn.example.com/app-icon-600x600.png'
      */
-    icon: '', // ⚠️ TODO: 600x600px 앱 아이콘 URL을 입력하세요! (출시 필수)
+    icon: 'https://hoxpxkwgwjupgysobpal.supabase.co/storage/v1/object/public/app-icons/eyemaster_logo.png', // ✅ 설정 완료
   },
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -129,7 +129,7 @@ export default defineConfig({
    * 
    * @example ['camera', 'photo'] // 카메라와 앨범 사용
    */
-  permissions: [],
+  permissions: [{ name: 'camera', access: 'access' }], // ✅ 거리 측정 기능에서 카메라 사용
 
   // ═══════════════════════════════════════════════════════════════════════
   // 📦 빌드 출력 디렉토리
