@@ -11,7 +11,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Check, AlertTriangle, Eye } from 'lucide-react';
 
-export type DistanceStatus = 'loading' | 'no_face' | 'too_far' | 'too_close' | 'perfect';
+export type DistanceStatus = 'loading' | 'no_face' | 'too_far' | 'too_close' | 'perfect' | 'error';
 
 interface DistanceMonitorProps {
   onDistanceChange: (status: DistanceStatus, isValid: boolean) => void;
@@ -233,44 +233,131 @@ export function DistanceMonitor({
 
     const loadResources = async () => {
       try {
-        const loadScript = (src: string): Promise<void> => {
+        // 스크립트 로드 헬퍼 (순차적 로드 보장)
+        const loadScript = (src: string, globalName?: string): Promise<void> => {
           return new Promise((resolve, reject) => {
-            if (document.querySelector(`script[src="${src}"]`)) {
+            // 이미 로드되었는지 확인
+            if (globalName && (window as any)[globalName]) {
+              console.log(`[DistanceMonitor] ${globalName} already loaded`);
               resolve();
               return;
             }
+
+            // 기존 스크립트 태그 확인
+            const existingScript = document.querySelector(`script[src="${src}"]`);
+            if (existingScript) {
+              // 이미 로드 중이면 로드 완료까지 대기
+              if (globalName) {
+                const checkInterval = setInterval(() => {
+                  if ((window as any)[globalName]) {
+                    clearInterval(checkInterval);
+                    resolve();
+                  }
+                }, 100);
+                // 10초 후 타임아웃
+                setTimeout(() => {
+                  clearInterval(checkInterval);
+                  reject(new Error(`Timeout waiting for ${globalName}`));
+                }, 10000);
+              } else {
+                resolve();
+              }
+              return;
+            }
+
             const script = document.createElement('script');
             script.src = src;
-            script.onload = () => resolve();
-            script.onerror = reject;
+            script.async = false; // 순차적 로드 보장
+            script.onload = () => {
+              console.log(`[DistanceMonitor] Loaded: ${src}`);
+              resolve();
+            };
+            script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
             document.head.appendChild(script);
           });
         };
 
-        // TensorFlow.js 로드
+        console.log('[DistanceMonitor] Starting TensorFlow.js loading...');
+
+        // ═══════════════════════════════════════════════════════════════════
+        // Step 1: TensorFlow.js 전체 번들 로드 (converter 포함)
+        // 주의: 개별 패키지(@tensorflow/tfjs-core 등) 대신 전체 번들 사용
+        // ═══════════════════════════════════════════════════════════════════
         if (!(window as any).tf) {
-          await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0');
-        }
-        if (!(window as any).blazeface) {
-          await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface@0.0.7');
+          await loadScript(
+            'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js',
+            'tf'
+          );
         }
 
-        // 모델 로드
-        const model = await (window as any).blazeface.load();
+        // ═══════════════════════════════════════════════════════════════════
+        // Step 2: tf.ready() 호출 - 백엔드 초기화 대기 (필수!)
+        // 이 단계를 건너뛰면 loadGraphModel이 undefined 에러 발생
+        // ═══════════════════════════════════════════════════════════════════
+        const tf = (window as any).tf;
+        if (!tf) {
+          throw new Error('TensorFlow.js failed to load');
+        }
+
+        console.log('[DistanceMonitor] Waiting for TensorFlow.js backend...');
+        await tf.ready();
+        console.log(`[DistanceMonitor] TensorFlow.js ready! Backend: ${tf.getBackend()}`);
+
+        // ═══════════════════════════════════════════════════════════════════
+        // Step 3: BlazeFace 모델 로드 (tf.ready() 이후에만 가능)
+        // 주의: v0.1.0에서 파일명이 blazeface.min.js → blazeface.min.umd.js로 변경됨
+        // UMD 형식은 브라우저 스크립트 태그에 적합
+        // ═══════════════════════════════════════════════════════════════════
+        if (!(window as any).blazeface) {
+          await loadScript(
+            'https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface@0.0.7/dist/blazeface.min.js',
+            'blazeface'
+          );
+        }
+
+        const blazeface = (window as any).blazeface;
+        if (!blazeface) {
+          throw new Error('BlazeFace failed to load');
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // Step 4: BlazeFace 모델 로드
+        // ═══════════════════════════════════════════════════════════════════
+        console.log('[DistanceMonitor] Loading BlazeFace model...');
+        const model = await blazeface.load({
+          maxFaces: 1,
+          scoreThreshold: 0.75,
+        });
+
         if (!isMounted) return;
-        
+
+        console.log('[DistanceMonitor] BlazeFace model loaded successfully!');
         modelRef.current = model;
         setIsModelLoaded(true);
-        
+
         // 카메라 시작
         await startVideo();
       } catch (err) {
-        console.error('Failed to load AI models:', err);
-        setStatus('loading');
+        console.error('[DistanceMonitor] Failed to load AI models:', err);
+        if (isMounted) {
+          setStatus('error');
+          onDistanceChange('error', false);
+        }
       }
     };
 
-    loadResources();
+    // 타임아웃 설정 (20초 - 느린 네트워크 고려)
+    const timeoutId = setTimeout(() => {
+      if (!modelRef.current) {
+        console.warn('[DistanceMonitor] Model loading timeout (20s)');
+        setStatus('error');
+        onDistanceChange('error', false);
+      }
+    }, 20000);
+
+    loadResources().finally(() => {
+      clearTimeout(timeoutId);
+    });
 
     return () => {
       isMounted = false;
@@ -320,6 +407,7 @@ export function DistanceMonitor({
     too_far: { bg: 'bg-yellow-500', icon: <AlertTriangle className="w-3 h-3" />, text: '가까이' },
     too_close: { bg: 'bg-red-500', icon: <AlertTriangle className="w-3 h-3" />, text: '멀리' },
     perfect: { bg: 'bg-green-500', icon: <Check className="w-3 h-3" />, text: '40cm' },
+    error: { bg: 'bg-red-600', icon: <AlertTriangle className="w-3 h-3" />, text: '오류' },
   };
 
   const config = statusConfig[status];

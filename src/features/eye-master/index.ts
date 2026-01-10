@@ -19,3 +19,5 @@ export { ProgressDashboard } from './components/ProgressDashboard';
 export { EyeExercise } from './components/EyeExercise';
 export { AstigmatismTest } from './components/AstigmatismTest';
 export type { AstigmatismResult } from './components/AstigmatismTest';
+export { PreTestQuestionnaire } from './components/PreTestQuestionnaire';
+export type { UserProfile, PreTestQuestionnaireProps } from './components/PreTestQuestionnaire';

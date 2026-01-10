@@ -54,6 +54,44 @@ export interface DailyCheckin {
   blurriness: 1 | 2 | 3 | 4 | 5;
 }
 
+// 사전 질문 사용자 프로필 (시력 검사용)
+export interface UserProfile {
+  ageGroup: '20s' | '30s' | '40s' | '50s' | '60plus';
+  glassesType: 'myopia' | 'hyperopia' | 'multifocal' | 'none';
+  wearingNow: boolean;
+  testPurpose: 'uncorrected' | 'corrected';
+}
+
+// Duochrome 테스트 결과
+export interface DuochromeResult {
+  response: 'red' | 'green' | 'equal';
+  interpretation: 'myopic_tendency' | 'hyperopic_tendency' | 'balanced';
+}
+
+// Hofstetter 공식 기반 조절력 계산
+export function getAccommodationAmplitude(age: number): number {
+  return Math.max(0, 18.5 - (0.30 * age));
+}
+
+// 40cm에서 돋보기 필요 여부 (2.5D 조절 필요)
+export function needsReadingGlasses(age: number): boolean {
+  const amplitude = getAccommodationAmplitude(age);
+  const nearDemand = 2.5; // 40cm에서 필요한 조절력
+  return amplitude < nearDemand * 1.5; // 여유분 필요
+}
+
+// 나이 그룹에서 대표 나이 추출
+export function getRepresentativeAge(ageGroup: UserProfile['ageGroup']): number {
+  const ageMap: Record<UserProfile['ageGroup'], number> = {
+    '20s': 25,
+    '30s': 35,
+    '40s': 45,
+    '50s': 55,
+    '60plus': 65
+  };
+  return ageMap[ageGroup];
+}
+
 // 사용자 통계
 export interface UserStats {
   totalTests: number;
